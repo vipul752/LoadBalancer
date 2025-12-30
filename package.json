@@ -6,8 +6,7 @@
   "main": "loadBalancer/loadBalancer.js",
   "scripts": {
     "start": "node loadBalancer/loadBalancer.js",
-    "dev": "BACKEND_HOST=backend BACKEND_PORT=3000 node loadBalancer/loadBalancer.js",
-    "prod": "BACKEND_HOST=localhost BACKEND_PORT=3000 node loadBalancer/loadBalancer.js"
+    "prod": "sh ./start-prod.sh"
   },
   "author": "Vipul Kumar",
   "license": "ISC",

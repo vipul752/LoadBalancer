@@ -11,46 +11,33 @@ app.get("/", (req, res) => {
       <style>
         body {
           font-family: Arial, sans-serif;
-          background: #0f172a;
-          color: #e5e7eb;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          height: 100vh;
+          padding: 20px;
+          background: white;
         }
         .card {
-          background: #111827;
-          padding: 30px;
-          border-radius: 12px;
-          text-align: center;
-          box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+          border: 1px solid #ddd;
+          padding: 20px;
+          max-width: 400px;
         }
         .info {
-          font-size: 18px;
           margin-bottom: 10px;
         }
         button {
-          margin-top: 20px;
-          padding: 12px 20px;
-          font-size: 16px;
-          border: none;
-          border-radius: 8px;
-          cursor: pointer;
-          background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+          margin-top: 15px;
+          padding: 10px 15px;
+          background: #007bff;
           color: white;
-        }
-        button:hover {
-          opacity: 0.9;
+          border: 1px solid #0056b3;
+          cursor: pointer;
         }
       </style>
     </head>
     <body>
       <div class="card">
-        <div class="info">🖥️ Container: <b>${process.env.HOSTNAME}</b></div>
-        <div class="info">⚙️ Process ID: <b>${process.pid}</b></div>
-
+        <div class="info">Container: <b>${process.env.HOSTNAME}</b></div>
+        <div class="info">Process ID: <b>${process.pid}</b></div>
         <button onclick="window.location.href='/dashboard'">
-          📊 View Load Balancer Dashboard
+          View Load Balancer Dashboard
         </button>
       </div>
     </body>
