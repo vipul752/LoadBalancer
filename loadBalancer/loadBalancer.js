@@ -218,7 +218,7 @@ app.get("/dashboard", (req, res) => {
   `);
 });
 
-app.use((req, res) => {
+app.use((req, res,next) => {
   if (req.path === "/metrics" || req.path === "/dashboard") {
     return next();
   }
