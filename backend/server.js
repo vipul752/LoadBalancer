@@ -35,6 +35,7 @@ app.get("/", (req, res) => {
     <body>
       <div class="card">
         <div class="info">Container: <b>${process.env.HOSTNAME}</b></div>
+        <div class="info">Backend Port: <b>${PORT}</b></div>
         <button onclick="window.location.href='/dashboard'">
           View Load Balancer Dashboard
         </button>
