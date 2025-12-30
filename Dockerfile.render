@@ -1,0 +1,20 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Copy backend
+COPY backend ./backend
+RUN cd backend && npm install express
+
+# Copy load balancer
+COPY loadBalancer ./loadBalancer
+RUN cd loadBalancer && npm install express
+
+# Expose LB port
+EXPOSE 8080
+
+# Start backend replicas + LB
+CMD node backend/server.js & \
+    node backend/server.js & \
+    node backend/server.js & \
+    node loadBalancer/loadBalancer.js

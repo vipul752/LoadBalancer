@@ -31,37 +31,185 @@ app.get("/dashboard", (req, res) => {
     <head>
       <title>Load Balancer Metrics</title>
       <style>
-        body { font-family: Arial; background: #0f172a; color: #e5e7eb; }
-        .card {
-          background: #111827;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          background: linear-gradient(135deg, #0f172a 0%, #1a2d4d 100%);
+          color: #e5e7eb;
+          min-height: 100vh;
           padding: 20px;
-          border-radius: 10px;
-          width: 300px;
-          margin: 50px auto;
-          box-shadow: 0 0 20px rgba(0,0,0,0.4);
         }
-        h2 { text-align: center; }
-        p { font-size: 18px; }
+
+        .container {
+          max-width: 1000px;
+          margin: 0 auto;
+        }
+
+        .header {
+          text-align: center;
+          margin-bottom: 40px;
+          padding: 20px 0;
+        }
+
+        .header h1 {
+          font-size: 2.5em;
+          background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          margin-bottom: 10px;
+        }
+
+        .header p {
+          color: #9ca3af;
+          font-size: 1.1em;
+        }
+
+        .metrics-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+          gap: 20px;
+          margin-bottom: 30px;
+        }
+
+        .metric-card {
+          background: rgba(17, 24, 39, 0.8);
+          border: 1px solid rgba(59, 130, 246, 0.2);
+          padding: 25px;
+          border-radius: 12px;
+          transition: all 0.3s ease;
+          backdrop-filter: blur(10px);
+        }
+
+        .metric-card:hover {
+          border-color: rgba(59, 130, 246, 0.5);
+          background: rgba(17, 24, 39, 1);
+          transform: translateY(-5px);
+          box-shadow: 0 10px 30px rgba(59, 130, 246, 0.1);
+        }
+
+        .metric-label {
+          font-size: 0.9em;
+          color: #9ca3af;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          margin-bottom: 10px;
+          font-weight: 600;
+        }
+
+        .metric-value {
+          font-size: 2.5em;
+          font-weight: bold;
+          background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
+
+        .metric-icon {
+          display: inline-block;
+          width: 40px;
+          height: 40px;
+          border-radius: 8px;
+          margin-bottom: 15px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 1.5em;
+        }
+
+        .icon-requests { background: rgba(59, 130, 246, 0.1); }
+        .icon-active { background: rgba(34, 197, 94, 0.1); }
+        .icon-errors { background: rgba(239, 68, 68, 0.1); }
+        .icon-response { background: rgba(168, 85, 247, 0.1); }
+
+        .footer {
+          text-align: center;
+          color: #6b7280;
+          font-size: 0.9em;
+          margin-top: 40px;
+          padding-top: 20px;
+          border-top: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .status-badge {
+          display: inline-block;
+          background: #22c55e;
+          color: white;
+          padding: 6px 12px;
+          border-radius: 20px;
+          font-size: 0.85em;
+          margin-top: 15px;
+          font-weight: 600;
+        }
+
+        @media (max-width: 600px) {
+          .header h1 { font-size: 1.8em; }
+          .metrics-grid { grid-template-columns: 1fr; }
+          .metric-value { font-size: 2em; }
+        }
       </style>
     </head>
     <body>
-      <div class="card">
-        <h2>Load Balancer Metrics</h2>
-        <p>Total Requests: <span id="total"></span></p>
-        <p>Active Requests: <span id="active"></span></p>
-        <p>Total Errors: <span id="errors"></span></p>
-        <p>Avg Response Time (ms): <span id="avg"></span></p>
+      <div class="container">
+        <div class="header">
+          <h1>⚖️ Load Balancer Dashboard</h1>
+          <p>Real-time Metrics & Performance Monitoring</p>
+        </div>
+
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-icon icon-requests">📊</div>
+            <div class="metric-label">Total Requests</div>
+            <div class="metric-value" id="total">0</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon icon-active">🔄</div>
+            <div class="metric-label">Active Requests</div>
+            <div class="metric-value" id="active">0</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon icon-errors">❌</div>
+            <div class="metric-label">Total Errors</div>
+            <div class="metric-value" id="errors">0</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon icon-response">⚡</div>
+            <div class="metric-label">Avg Response Time (ms)</div>
+            <div class="metric-value" id="avg">0</div>
+          </div>
+        </div>
+
+        <div style="text-align: center;">
+          <span class="status-badge">✓ Live Updating</span>
+        </div>
+
+        <div class="footer">
+          <p>Updates every second • Last updated: <span id="timestamp">--:--:--</span></p>
+        </div>
       </div>
 
       <script>
         async function fetchMetrics() {
-          const res = await fetch('/metrics');
-          const data = await res.json();
-          document.getElementById('total').innerText = data.totalRequests;
-          document.getElementById('active').innerText = data.activeRequests;
-          document.getElementById('errors').innerText = data.totalErrors;
-          document.getElementById('avg').innerText = data.averageResponseTimeMs;
+          try {
+            const res = await fetch('/metrics');
+            const data = await res.json();
+            document.getElementById('total').innerText = data.totalRequests.toLocaleString();
+            document.getElementById('active').innerText = data.activeRequests;
+            document.getElementById('errors').innerText = data.totalErrors;
+            document.getElementById('avg').innerText = data.averageResponseTimeMs;
+            
+            const now = new Date();
+            document.getElementById('timestamp').innerText = now.toLocaleTimeString();
+          } catch (error) {
+            console.error('Failed to fetch metrics:', error);
+          }
         }
+        
         setInterval(fetchMetrics, 1000);
         fetchMetrics();
       </script>
