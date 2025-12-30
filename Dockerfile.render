@@ -10,10 +10,9 @@ RUN cd backend && npm install express
 COPY loadBalancer ./loadBalancer
 RUN cd loadBalancer && npm install express
 
-# Expose LB port
 EXPOSE 8080
 
-# Start backend replicas + LB
+# Start 3 backend replicas + load balancer
 CMD node backend/server.js & \
     node backend/server.js & \
     node backend/server.js & \
