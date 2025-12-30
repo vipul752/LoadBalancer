@@ -13,7 +13,7 @@ RUN cd loadBalancer && npm install express
 EXPOSE 8080
 
 # Start 3 backend replicas + load balancer
-CMD node backend/server.js & \
-    node backend/server.js & \
-    node backend/server.js & \
+CMD node backend/index.js & \
+    node backend/index.js & \
+    node backend/index.js & \
     node loadBalancer/loadBalancer.js
