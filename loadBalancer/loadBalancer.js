@@ -4,8 +4,8 @@ const http = require("http");
 const app = express();
 const PORT = 8080;
 
-const BACKEND_HOST = "backend";
-const BACKEND_PORT = 3000;
+const BACKEND_HOST = process.env.BACKEND_HOST || "localhost";
+const BACKEND_PORT = process.env.BACKEND_PORT || 3000;
 
 let totalRequests = 0;
 let activeRequests = 0;
@@ -219,13 +219,16 @@ app.get("/dashboard", (req, res) => {
 });
 
 app.use((req, res) => {
+  if (req.path === "/metrics" || req.path === "/dashboard") {
+    return next();
+  }
   const start = Date.now();
   totalRequests++;
   activeRequests++;
 
   const options = {
-    hostname: "backend",
-    port: 3000,
+    hostname: BACKEND_HOST,
+    port: BACKEND_PORT,
     path: req.originalUrl,
     method: req.method,
     headers: req.headers,
